@@ -40,7 +40,7 @@ namespace backup.core.Implementations
     /// <summary>
     /// Storage Backup
     /// </summary>
-    public class StorageBackupWorker:IStorageBackup
+    public class StorageBackupWorker : IStorageBackup
     {
         private readonly ILogger<StorageBackupWorker> _logger;
 

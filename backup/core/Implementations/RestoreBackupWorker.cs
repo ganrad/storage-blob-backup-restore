@@ -41,7 +41,7 @@ namespace backup.core.Implementations
     /// <summary>
     /// Restore Backup Worker
     /// </summary>
-    public class RestoreBackupWorker: IRestoreBackup
+    public class RestoreBackupWorker : IRestoreBackup
     {
         private readonly ILogger<RestoreBackupWorker> _logger;
 

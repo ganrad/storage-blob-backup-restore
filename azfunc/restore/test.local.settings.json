@@ -1,0 +1,11 @@
+{
+    "IsEncrypted": false,
+    "Values": {
+        "AzureWebJobsStorage": "",
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+	"RES_STORAGE_ACCOUNT_CONN": "Backup Storage Account Connection String",
+	"SRC_STORAGE_ACCOUNT_CONN": "Source/Destination Storage Account Connection String --- Account to restore blobs",
+	"STORAGE_LOG_TABLE_CONN": "Replay Log Table Storage Account Connection String",
+	"STORAGE_LOG_TABLE_NAME": "replaylog"
+    }
+}

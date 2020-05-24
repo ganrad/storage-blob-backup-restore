@@ -1,0 +1,15 @@
+{
+    "IsEncrypted": false,
+    "Values": {
+        "AzureWebJobsStorage": "",
+        "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+	"SRC_STORAGE_ACCOUNT_CONN": "Source Storage Account Connection String",
+	"RES_STORAGE_ACCOUNT_CONN": "Backup Storage Account Connection String",
+	"EVT_STORAGE_ACCOUNT_CONN": "Event Queue Storage Account Connection String",
+	"EVENT_QUEUE_NAME": "evt-queue",
+	"QueueVisibilityTimeOutInMS": "300000",
+	"QueueMessageCountToRead": "32",
+	"STORAGE_LOG_TABLE_CONN": "Replay Log Table Storage Account Connection String",
+	"STORAGE_LOG_TABLE_NAME": "replaylog"
+    }
+}

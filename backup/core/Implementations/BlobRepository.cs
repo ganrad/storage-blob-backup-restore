@@ -121,6 +121,8 @@ namespace backup.core.Implementations
                     destinationBlobInfo.OrgContainerName = sourceBlockBlob.Container.Name;
 
                     destinationBlobInfo.OrgBlobName = sourceBlockBlob.Name;
+
+                    _logger.LogInformation($"Copy Scheduled. Source Blob Name: {sourceBlockBlob.Name}, Destination Blob Name: {destinationBlobInfo.BlobName}, Copy Id: {copyResult}.");
                     
                     return destinationBlobInfo;
                 }
@@ -145,10 +147,10 @@ namespace backup.core.Implementations
         public async Task<string> CopyBlobFromBackupToRestore(DestinationBlobInfo backupBlob)
         {
             string destinationStorageAccountConnectionString = 
-	       Environment.GetEnvironmentVariable("RES_STORAGE_ACCOUNT_CONN");
+	       Environment.GetEnvironmentVariable("SRC_STORAGE_ACCOUNT_CONN");
 
             string sourceStorageAccountConnectionString = 
- 	       Environment.GetEnvironmentVariable("SRC_STORAGE_ACCOUNT_CONN");
+ 	       Environment.GetEnvironmentVariable("RES_STORAGE_ACCOUNT_CONN");
 
             // Retrieve the storage account from the connection string.
             CloudStorageAccount sourceStorageAccount = CloudStorageAccount.Parse(sourceStorageAccountConnectionString);

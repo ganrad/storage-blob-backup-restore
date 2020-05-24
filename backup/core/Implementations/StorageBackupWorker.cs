@@ -96,14 +96,14 @@ namespace backup.core.Implementations
 
                     eventData = new EventData(eventString);
 
-                    if (eventData.RecievedEventData != null)
+                    if (eventData.ReceivedEventData != null)
                     {
                         //In case file has been added, copy the file from source storage to destination storage
-                        if (eventData.RecievedEventData is BlobEvent<CreatedEventData>)
+                        if (eventData.ReceivedEventData is BlobEvent<CreatedEventData>)
                         {
                             _logger.LogDebug($"Going to write to blob---{@eventString}");
 
-                            DestinationBlobInfo destinationBlobInfo = await _blobRepository.CopyBlobFromSourceToBackup(eventData.RecievedEventData);
+                            DestinationBlobInfo destinationBlobInfo = await _blobRepository.CopyBlobFromSourceToBackup(eventData.ReceivedEventData);
 
                             eventData.DestinationBlobInfo = destinationBlobInfo;
                             if (eventData.DestinationBlobInfo == null)

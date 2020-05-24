@@ -99,9 +99,9 @@ namespace backup.core.Implementations
                     {
                         try
                         {
-                            if (eventData.RecievedEventData is BlobEvent<CreatedEventData>)
+                            if (eventData.ReceivedEventData is BlobEvent<CreatedEventData>)
                             {
-                                BlobEvent<CreatedEventData> createdBlob = (BlobEvent<CreatedEventData>)eventData.RecievedEventData;
+                                BlobEvent<CreatedEventData> createdBlob = (BlobEvent<CreatedEventData>)eventData.ReceivedEventData;
 
                                 if (eventData.DestinationBlobInfo != null)
                                 {
@@ -120,9 +120,9 @@ namespace backup.core.Implementations
 				    continue;
                                 }
                             }
-                            else if (eventData.RecievedEventData is BlobEvent<DeletedEventData>)
+                            else if (eventData.ReceivedEventData is BlobEvent<DeletedEventData>)
                             {
-                                BlobEvent<DeletedEventData> deletedBlob = (BlobEvent<DeletedEventData>)eventData.RecievedEventData;
+                                BlobEvent<DeletedEventData> deletedBlob = (BlobEvent<DeletedEventData>)eventData.ReceivedEventData;
 
 				if ( reqResponse.SkipDeletes.ToUpper(new CultureInfo("en-US",false)).Equals(Constants.Constants.RestoreReqInputs.YES) )
 				   continue;
@@ -134,11 +134,11 @@ namespace backup.core.Implementations
 				   continue;
 				
                                 _logger.LogInformation($"Going to perform delete as it is a deleted event {deletedBlob.data.url}");
-                                await _blobRepository.DeleteBlobFromRestore(eventData.RecievedEventData);
+                                await _blobRepository.DeleteBlobFromRestore(eventData.ReceivedEventData);
                             }
                             else
                             {
-                                _logger.LogInformation($"Currently only Created and Deleted events are supported. Event Data: {eventData.RecievedEventDataJSON}");
+                                _logger.LogInformation($"Currently only Created and Deleted events are supported. Event Data: {eventData.ReceivedEventDataJSON}");
 				continue;
                             }
 
@@ -147,7 +147,7 @@ namespace backup.core.Implementations
                         catch(Exception ex)
                         {
                             totalFailureCount++;
-                            _logger.LogError($"Exception while restoring event {eventData.RecievedEventDataJSON}. Exception {ex.ToString()}");
+                            _logger.LogError($"Exception while restoring event {eventData.ReceivedEventDataJSON}. Exception {ex.ToString()}");
                         }
                     }
                 }

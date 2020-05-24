@@ -121,7 +121,7 @@ namespace backup.core.Implementations
                         entity.DestinationBlobInfo = JsonConvert.DeserializeObject<DestinationBlobInfo>(entity.DestinationBlobInfoJSON);
                     }
 
-                    entity.RecievedEventData = IBlobEvent.ParseBlobEvent(entity.RecievedEventDataJSON);
+                    entity.ReceivedEventData = IBlobEvent.ParseBlobEvent(entity.ReceivedEventDataJSON);
 
                     blobEvents.Add(entity);
                 }

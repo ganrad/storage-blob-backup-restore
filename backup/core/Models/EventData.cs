@@ -47,7 +47,7 @@ namespace backup.core.Models
         /// <summary>
         /// Event recieved from storage Queue
         /// </summary>
-        public IBlobEvent RecievedEventData { get; set; }
+        public IBlobEvent ReceivedEventData { get; set; }
 
         /// <summary>
         /// Destination Blob Info. Populated only in case of CREATE
@@ -61,10 +61,10 @@ namespace backup.core.Models
         public string DestinationBlobInfoJSON { get; set; }
 
         /// <summary>
-        /// RecievedEventDataJSON
+        /// ReceivedEventDataJSON
         /// Destination Blob Info. Populated for CREATE and DELETE events
         /// </summary>
-        public string RecievedEventDataJSON { get; set; }
+        public string ReceivedEventDataJSON { get; set; }
 
         /// <summary>
         /// Event Data Constructor
@@ -76,11 +76,11 @@ namespace backup.core.Models
 
             DateTime eventDateTime;
 
-            RecievedEventData = IBlobEvent.ParseBlobEvent(eventData, out eventId, out eventDateTime);
+            ReceivedEventData = IBlobEvent.ParseBlobEvent(eventData, out eventId, out eventDateTime);
 
-            if (RecievedEventData != null)
+            if (ReceivedEventData != null)
             {
-                RecievedEventDataJSON = JsonConvert.SerializeObject(RecievedEventData);
+                ReceivedEventDataJSON = JsonConvert.SerializeObject(ReceivedEventData);
 
                 string partitionKey = string.Empty;
 

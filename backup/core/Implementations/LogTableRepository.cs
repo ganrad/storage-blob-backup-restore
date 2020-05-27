@@ -26,7 +26,8 @@ using System.Threading.Tasks;
 
 /**
  * Description:
- * This class represents a Storage Table repository and contains operations/methods for manipulating entities.
+ * This class represents a Storage Table repository for the replay log entity. Contains methods for 
+ * manipulating entities.
  * 
  * Author: GR @Microsoft
  * Dated: 05-23-2020

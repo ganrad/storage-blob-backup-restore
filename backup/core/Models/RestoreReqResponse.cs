@@ -75,16 +75,16 @@ namespace backup.core.Models
       public string ReqType { get; set; } = Constants.Constants.RESTORE_REQUEST_TYPE_SYNC;
 
       /// <summary>
-      /// Start time
+      /// Start date and time of the asynchronous restore process
       /// </summary>
       [JsonProperty]
-      public DateTime? StartTime { get; set; } = null;
+      public string StartTime { get; set; } = "";
 
       /// <summary>
-      /// End time
+      /// End date and time of the asynchronous restore process
       /// </summary>
       [JsonProperty]
-      public DateTime? EndTime { get; set; } = null;
+      public string EndTime { get; set; } = "";
       
       /// <summary>
       /// Skip blob deletes ?
@@ -120,7 +120,7 @@ namespace backup.core.Models
       /// Restore process current status
       /// </summary>
       [JsonProperty]
-      public string Status { get; set; } = Constants.Constants.RESTORE_STATUS_FINISHED;
+      public string Status { get; set; } = Constants.Constants.RESTORE_STATUS_COMPLETED;
       
       /// <summary>
       /// Exceptions

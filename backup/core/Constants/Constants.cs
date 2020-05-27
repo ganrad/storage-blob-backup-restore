@@ -37,7 +37,7 @@ namespace backup.core.Constants
 
         public const string RESTORE_STATUS_ACCEPTED = "Accepted";
         public const string RESTORE_STATUS_INPROCESS = "Processing";
-        public const string RESTORE_STATUS_FINISHED = "Finished";
+        public const string RESTORE_STATUS_COMPLETED = "Completed";
         public const string RESTORE_STATUS_EXCEPTION = "Exception";
 
         /// <summary>

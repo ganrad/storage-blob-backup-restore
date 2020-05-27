@@ -45,9 +45,9 @@ namespace backup.core.Models
         }
 
 	/// <summary>
-	/// A GUID for the restore request
+	/// Status of the restore request
 	/// </summary>
-	public string ReqGuid { get; set; }
+	public string CurrentStatus { get; set; }
 
         /// <summary>
         /// Restore async request
@@ -65,14 +65,15 @@ namespace backup.core.Models
         /// <param name="restoreRequest"></param>
         public RestoreReqEntity(RestoreReqResponse restoreRequest)
         {
-	   ReqGuid = Guid.NewGuid().ToString();
-	   restoreRequest.StatusLocationUri += $"{ReqGuid}";
-           RestoreReqRespDataJSON = JsonConvert.SerializeObject(restoreRequest);
-
            EventDateDetails dateDetails = new EventDateDetails(DateTime.Now);
 
            base.PartitionKey = $"{dateDetails.year}_{dateDetails.WeekNumber}";
-           base.RowKey = $"{dateDetails.formattedDate}";
+           base.RowKey = Guid.NewGuid().ToString();
+
+	   restoreRequest.StatusLocationUri += $"{base.PartitionKey}/{base.RowKey}";
+
+	   CurrentStatus = restoreRequest.Status;
+           RestoreReqRespDataJSON = JsonConvert.SerializeObject(restoreRequest);
         }
     }
 }

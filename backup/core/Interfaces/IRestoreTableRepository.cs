@@ -29,33 +29,36 @@ using System.Threading.Tasks;
 namespace backup.core.Interfaces
 {
     /// <summary>
-    /// Repostiory to store the back up files logs.
-    /// It contains methods to store and read the the backup logs.
+    /// Repository to manipulate restore requests/jobs stored in an Azure Storage Table.
     /// </summary>
     public interface IRestoreTableRepository
     {
         /// <summary>
-        /// Inserts the blob event in Az storage table
+        /// Inserts an async restore request/job in Az storage table
         /// </summary>
         /// <param name="restoreRequest"></param>
         /// <returns></returns>
-	Task InsertRestoreRequest(RestoreReqResponse restoreRequest);
+	public Task InsertRestoreRequest(RestoreReqResponse restoreRequest);
 
 	/// <summary>
-	/// Retrieves the details of a restore request
+	/// Retrieves the details of an async restore request from the storage table
 	/// </summary>
+	/// <param name="datestr"></param>
 	/// <param name="guid"></param>
 	/// <returns>RestoreReqResponse</returns>
-	Task<RestoreReqResponse> GetRestoreReqDetails(string guid);
+	public RestoreReqResponse GetRestoreReqDetails(string datestr, string guid);
 
+	/// <summary>
+	/// Retrieves an async restore request for processing
+	/// </summary>
+	/// <returns>RestoreReqResponse</returns>
+	public Task<RestoreReqResponse> GetRestoreRequest();
+	
         /// <summary>
-        /// Returns the blob events data from Az storage table based on yearNumber, weeknumber, start date and end date
+        /// Updates a restore request/job in Az storage table
         /// </summary>
-        /// <param name="yearNumber"></param>
-        /// <param name="weekNumber"></param>
-        /// <param name="startDate"></param>
-        /// <param name="endDate"></param>
+        /// <param name="restoreRequest"></param>
         /// <returns></returns>
-        // Task<List<IEventData>> GetBLOBEvents(int yearNumber,int weekNumber, DateTime startDate, DateTime endDate);
+	public Task UpdateRestoreRequest(RestoreReqResponse restoreRequest);
     }
 }

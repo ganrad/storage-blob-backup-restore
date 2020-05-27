@@ -37,5 +37,9 @@ namespace backup.core.Utilities
 
         /// <summary>Get extra date time string</summary>
 	public static String GetString { get { return DateTime.Now.ToString("MM-dd-yyyy@HH:mm:ss.fff"); } }	
+
+	public static String getTimeString(TimeSpan ts) {
+	  return ( String.Format("{0:00}:{1:00}:{2:00}.{3:00}",ts.Hours,ts.Minutes,ts.Seconds,ts.Milliseconds / 10) );
+	}
     }
 }

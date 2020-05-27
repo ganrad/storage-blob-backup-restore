@@ -16,6 +16,7 @@ using backup.core.Constants;
 using backup.core.Implementations;
 using backup.core.Interfaces;
 using backup.core.Models;
+using backup.core.Utilities;
 
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -36,6 +37,9 @@ using System.Threading.Tasks;
  * Description:
  * This Azure Function Wrapper restores Azure Storage Block blobs from backup storage account into destination storage
  * account.
+ * Exposes two API endpoints:
+ * 1] Execute a synchronous restore request. Capture an asynchronous restore request in an Azure Storage Table
+ * 2] Get the current status of an in-progress/completed asynchronous restore request.
  *
  * Author: GR @Microsoft
  * Dated: 05-23-2020
@@ -105,7 +109,7 @@ namespace azfunc.restore.process
 	   };
 
 	   stopWatch.Stop();
-	   reqRespData.ExecutionTime = getTimeString(stopWatch.Elapsed);
+	   reqRespData.ExecutionTime = DateTimeUtil.getTimeString(stopWatch.Elapsed);
 
 	   return reqRespData;
         }
@@ -115,19 +119,22 @@ namespace azfunc.restore.process
 	/// async restore request.
 	/// </summary>
 	[FunctionName("GetRestoreStatus")]
-        public async Task<ActionResult<RestoreReqResponse>> Run0(
-	   [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "restore")]
-	    HttpRequest req, string guid, ILogger log)
+        public ActionResult<RestoreReqResponse> Run0(
+	   [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "restore/{datestr}/{guid}")]
+	    HttpRequest req, string datestr, string guid, ILogger log)
 	{
 	   log.LogInformation($"GetRestoreStatus: Invoked at: {DateTime.Now}");
+
+	   RestoreReqResponse restoreDetails = _restoreTable.GetRestoreReqDetails(datestr,guid);
+
+	   if ( restoreDetails == null )
+	   {
+		   restoreDetails = new RestoreReqResponse();
+		   restoreDetails.ExceptionMessage = $"Couldn't find a restore request for year_weeko:{datestr} and guid:{guid}. Check the URI.";
+	   };
+
 	   log.LogInformation($"GetRestoreStatus: Completed execution at: {DateTime.Now}");
-
-	   return null;
-	}
-
-	private string getTimeString(TimeSpan ts) {
-	  return ( String.Format("{0:00}:{1:00}:{2:00}.{3:00}",ts.Hours, ts.Minutes, ts.Seconds,
-	    ts.Milliseconds / 10) );
+	   return restoreDetails;
 	}
 
 	private async Task<RestoreReqResponse> ValidateInput(HttpRequest req)

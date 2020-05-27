@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+using backup.core.Constants;
 using backup.core.Interfaces;
 using backup.core.Models;
 
@@ -95,14 +96,74 @@ namespace backup.core.Implementations
             await restoreReqTable.ExecuteAsync(insertOperation);
         }
 
-	// <summary>
-	// Get the current status of a restore request
-	// </summary>
-	public async Task<RestoreReqResponse> GetRestoreReqDetails(string guid)
+	/// <summary>
+	/// Get the current status/details of a restore request
+	/// </summary>
+	public RestoreReqResponse GetRestoreReqDetails(string datestr, string guid)
 	{
 	    CloudTable restoreReqTable = GetCloudTable();
+	    RestoreReqResponse restoreReqStatus = null;
 
-	    return null;
+	    // Execute 'point' query to retrieve the restore request details -
+	    TableOperation retrieveOperation = TableOperation.Retrieve<RestoreReqEntity>(datestr,guid);
+	    var retrieveResult = restoreReqTable.Execute(retrieveOperation);
+	    if ( retrieveResult.Result != null )
+	    {
+	       RestoreReqEntity reqEntity = (RestoreReqEntity) retrieveResult.Result;
+	       
+	       restoreReqStatus = JsonConvert.DeserializeObject<RestoreReqResponse>(reqEntity.RestoreReqRespDataJSON);
+	    };
+
+	    return restoreReqStatus;
+	}
+
+	public async Task<RestoreReqResponse> GetRestoreRequest()
+	{
+	    RestoreReqResponse reqRespData = null;
+	    CloudTable restoreReqTable = GetCloudTable();
+	    
+	    EventDateDetails dateDetails = new EventDateDetails(DateTime.Now);
+
+	    var whereCondition = TableQuery.GenerateFilterCondition("PartitionKey",QueryComparisons.Equal,
+	      $"{dateDetails.year.ToString()}_{dateDetails.WeekNumber.ToString()}");
+	    var statusCondition = TableQuery.GenerateFilterCondition("CurrentStatus",QueryComparisons.Equal,
+	      Constants.Constants.RESTORE_STATUS_ACCEPTED);
+
+	    string query = TableQuery.CombineFilters(whereCondition,TableOperators.And,statusCondition);
+
+	    TableQuery<RestoreReqEntity> partitionQuery = new TableQuery<RestoreReqEntity>().Where(query);
+	    partitionQuery.TakeCount = 1; // Return only one record at a time;
+
+	    TableQuerySegment<RestoreReqEntity> resultSegment = 
+	      await restoreReqTable.ExecuteQuerySegmentedAsync(partitionQuery,null);
+	    
+	    if ( (resultSegment.Results != null) && (resultSegment.Results.Count == 1) )
+	    {
+	       foreach (RestoreReqEntity entity in resultSegment.Results)
+	         reqRespData = 
+	           JsonConvert.DeserializeObject<RestoreReqResponse>(entity.RestoreReqRespDataJSON);
+	    };
+
+	    return reqRespData;
+	}
+
+	public async Task UpdateRestoreRequest(RestoreReqResponse restoreRequest)
+	{
+	    string url = restoreRequest.StatusLocationUri;
+	    string guid = url.Substring(url.LastIndexOf("/") + 1);
+	    url = url.Substring(0,url.LastIndexOf("/"));
+	    string datestr = url.Substring(url.LastIndexOf("/") + 1);
+
+	    RestoreReqEntity reqEntity = new RestoreReqEntity();
+	    reqEntity.PartitionKey = datestr;
+	    reqEntity.RowKey = guid;
+	    reqEntity.CurrentStatus = restoreRequest.Status;
+	    reqEntity.RestoreReqRespDataJSON = JsonConvert.SerializeObject(restoreRequest);
+
+	    CloudTable restoreReqTable = GetCloudTable();
+	    TableOperation mergeOperation = TableOperation.InsertOrMerge(reqEntity);
+	    // Execute the merge operation
+	    TableResult result = await restoreReqTable.ExecuteAsync(mergeOperation);
 	}
     }
 }

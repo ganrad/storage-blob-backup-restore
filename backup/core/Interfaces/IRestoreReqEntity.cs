@@ -19,7 +19,7 @@ using System;
 
 /**
  * Description:
- * This abstract class represents the 'Restore Request' entity type (Azure Storage Table)
+ * This abstract base class represents the 'Restore Request' entity type (Azure Storage Table)
  * 
  * Author: GR @Microsoft
  * Dated: 05-26-2020

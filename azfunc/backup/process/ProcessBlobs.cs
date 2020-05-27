@@ -29,8 +29,9 @@ using System.Threading.Tasks;
 
 /**
  * Description:
- * This function runs the backup process and is triggered by messages arriving in an Azure Storage Queue. For each
- * message, the function then copies a blob from the source storage container to the target storage container.
+ * This Function runs the backup process and is triggered by a Timer event. Every time this Function is invoked, it
+ * reads messages from an Azure Storage Queue.  For each message, the Function then copies a blob from the source 
+ * storage container to the target storage container.
  * 
  * Author: GR @Microsoft
  * Dated: 05-23-2020

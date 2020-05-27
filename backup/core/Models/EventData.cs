@@ -82,9 +82,9 @@ namespace backup.core.Models
             {
                 ReceivedEventDataJSON = JsonConvert.SerializeObject(ReceivedEventData);
 
-                string partitionKey = string.Empty;
+                // string partitionKey = string.Empty;
 
-                string rowKey = string.Empty;
+                // string rowKey = string.Empty;
 
                 EventDateDetails dateDetails = new EventDateDetails(eventDateTime);
 

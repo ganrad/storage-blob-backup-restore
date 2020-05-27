@@ -124,7 +124,7 @@ namespace backup.core.Implementations
                             {
                                 BlobEvent<DeletedEventData> deletedBlob = (BlobEvent<DeletedEventData>)eventData.ReceivedEventData;
 
-				if ( reqResponse.SkipDeletes.ToUpper(new CultureInfo("en-US",false)).Equals(Constants.Constants.RestoreReqInputs.YES) )
+				if ( reqResponse.SkipDeletes.ToUpper(new CultureInfo("en-US",false)).Equals(Constants.Constants.RESTORE_SKIP_DELETES_YES) )
 				   continue;
 
 				if ( (! String.IsNullOrEmpty(reqResponse.ContainerName)) && (! deletedBlob.data.url.Contains(reqResponse.ContainerName)) )

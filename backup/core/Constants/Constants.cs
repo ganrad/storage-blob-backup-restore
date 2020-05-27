@@ -27,8 +27,19 @@ using System.Text;
  */
 namespace backup.core.Constants
 {
-    public class Constants
+    public static class Constants
     {
+	public const string RESTORE_REQUEST_TYPE_SYNC = "Sync";
+	public const string RESTORE_REQUEST_TYPE_ASYNC = "Async";
+
+	public const string RESTORE_SKIP_DELETES_YES = "YES";
+	public const string RESTORE_SKIP_DELETES_NO = "NO";
+
+        public const string RESTORE_STATUS_ACCEPTED = "Accepted";
+        public const string RESTORE_STATUS_INPROCESS = "Processing";
+        public const string RESTORE_STATUS_FINISHED = "Finished";
+        public const string RESTORE_STATUS_EXCEPTION = "Exception";
+
         /// <summary>
         /// BLOB Event Type
         /// </summary>
@@ -37,14 +48,5 @@ namespace backup.core.Constants
             public const string BLOBCREATED = "Microsoft.Storage.BlobCreated";
             public const string BLOBDELETED = "Microsoft.Storage.BlobDeleted";
         }
-
-	/// <summary>
-	/// Input constants used in the request values of the Restore process
-	/// </summary>
-        public struct RestoreReqInputs
-        {
-            public const string YES = "YES";
-            public const string NO = "NO";
-	}
     }
 }

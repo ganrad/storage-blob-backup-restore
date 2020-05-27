@@ -16,6 +16,7 @@
 using System;
 using Newtonsoft.Json;
 
+using backup.core.Constants;
 /**
  * Description:
  * This class represents the object model for restore process JSON request and response.
@@ -71,7 +72,7 @@ namespace backup.core.Models
       /// Request type : Synchronous or Asynchronous
       /// </summary>
       [JsonProperty]
-      public string ReqType { get; set; } = "Sync";
+      public string ReqType { get; set; } = Constants.Constants.RESTORE_REQUEST_TYPE_SYNC;
 
       /// <summary>
       /// Start time
@@ -84,6 +85,12 @@ namespace backup.core.Models
       /// </summary>
       [JsonProperty]
       public DateTime? EndTime { get; set; } = null;
+      
+      /// <summary>
+      /// Skip blob deletes ?
+      /// </summary>
+      [JsonProperty]
+      public string SkipDeletes { get; set; } = Constants.Constants.RESTORE_SKIP_DELETES_NO;
 
       /// <summary>
       /// No. of blobs restored successfully
@@ -98,27 +105,27 @@ namespace backup.core.Models
       public int TotalFailureCount { get; set; }
 
       /// <summary>
-      /// Exceptions
-      /// </summary>
-      [JsonProperty]
-      public string ExceptionMessage { get; set; } = "";
-
-      /// <summary>
       /// Execution time
       /// </summary>
       [JsonProperty]
       public string ExecutionTime { get; set; } = "";
 
       /// <summary>
-      /// Skip blob deletes ?
-      /// </summary>
-      [JsonProperty]
-      public string SkipDeletes { get; set; } = "No";
-
-      /// <summary>
       /// URI to check the status of restore process
       /// </summary>
       [JsonProperty]
       public string StatusLocationUri { get; set; } = "";
+
+      /// <summary>
+      /// Restore process current status
+      /// </summary>
+      [JsonProperty]
+      public string Status { get; set; } = Constants.Constants.RESTORE_STATUS_FINISHED;
+      
+      /// <summary>
+      /// Exceptions
+      /// </summary>
+      [JsonProperty]
+      public string ExceptionMessage { get; set; } = "";
    }
 }

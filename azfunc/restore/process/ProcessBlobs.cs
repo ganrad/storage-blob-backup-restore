@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+using backup.core.Constants;
 using backup.core.Implementations;
 using backup.core.Interfaces;
 using backup.core.Models;
@@ -50,10 +51,12 @@ namespace azfunc.restore.process
     class ProcessBlobs
     {
         private readonly IRestoreBackup _restoreBackup;
+	private readonly IRestoreTableRepository _restoreTable;
 
-	public ProcessBlobs(IRestoreBackup restoreBackup)
+	public ProcessBlobs(IRestoreBackup restoreBackup, IRestoreTableRepository restoreTable)
 	{
 	   _restoreBackup = restoreBackup;
+	   _restoreTable = restoreTable;
 	}
 
 	/// <summary>
@@ -61,20 +64,65 @@ namespace azfunc.restore.process
 	/// </summary>
 	[FunctionName("PerformRestore")]
         public async Task<ActionResult<RestoreReqResponse>> Run(
-		[HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "restore/blobs")]
-		HttpRequest req, Microsoft.Extensions.Logging.ILogger log)
+	   [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "restore/blobs")]
+	    HttpRequest req, Microsoft.Extensions.Logging.ILogger log)
         {
 	   log.LogInformation($"PerformRestore: Invoked at: {DateTime.Now}");
 	   Stopwatch stopWatch = new Stopwatch();
 	   stopWatch.Start();
 
+	   RestoreReqResponse reqRespData = await ValidateInput(req);
+
+	   if ( string.IsNullOrEmpty(reqRespData.ExceptionMessage) )
+	   {
+	      try
+	      {
+	         // First check if async restore is requested
+	         if ( reqRespData.ReqType.Equals(Constants.RESTORE_REQUEST_TYPE_ASYNC) )
+	         {
+	            reqRespData.Status = Constants.RESTORE_STATUS_ACCEPTED;
+		    reqRespData.StatusLocationUri = $"{req.Scheme}://{req.Host}{req.PathBase}/api/restore/";
+
+		    await _restoreTable.InsertRestoreRequest(reqRespData);
+	         }
+	         else
+	         {
+                    log.LogInformation($"PerformRestore: Start date : {reqRespData.StDate.ToString("MM/dd/yyyy")}, End date {reqRespData.EnDate.ToString("MM/dd/yyyy")}. Proceeding with restore process ...");
+
+	            if ( ! String.IsNullOrEmpty(reqRespData.ContainerName) )
+                       log.LogInformation($"PerformRestore: Container Name : {reqRespData.ContainerName}");
+
+                    await _restoreBackup.Run(reqRespData);
+	         };
+	         log.LogInformation($"PerformRestore: Completed execution at: {DateTime.Now}");
+              }
+              catch(Exception ex)
+              {
+                 log.LogError($"PerformRestore: Exception occurred. Exception: {@ex.ToString()}");
+	         reqRespData.ExceptionMessage = $"Encountered exception : {@ex.ToString()}";
+	         reqRespData.Status = Constants.RESTORE_STATUS_EXCEPTION;
+              }
+	   };
+
+	   stopWatch.Stop();
+	   reqRespData.ExecutionTime = getTimeString(stopWatch.Elapsed);
+
+	   return reqRespData;
+        }
+
+	private string getTimeString(TimeSpan ts) {
+	  return ( String.Format("{0:00}:{1:00}:{2:00}.{3:00}",ts.Hours, ts.Minutes, ts.Seconds,
+	    ts.Milliseconds / 10) );
+	}
+
+	private async Task<RestoreReqResponse> ValidateInput(HttpRequest req)
+	{
 	   string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
 	   RestoreReqResponse reqRespData = JsonConvert.DeserializeObject<RestoreReqResponse>(requestBody);
 
            if ( String.IsNullOrEmpty(reqRespData.StartDate) || String.IsNullOrEmpty(reqRespData.EndDate) ) {
-	      reqRespData.ExceptionMessage = "Request is missing JSON payload containing start and end dates!";
-	      stopWatch.Stop();
-	      reqRespData.ExecutionTime = getTimeString(stopWatch.Elapsed);
+	      reqRespData.ExceptionMessage = "Start and End dates are incorrect and/or missing!";
+	      reqRespData.Status = Constants.RESTORE_STATUS_EXCEPTION;
 
 	      return reqRespData;
 	   };
@@ -90,63 +138,42 @@ namespace azfunc.restore.process
 
            if (!startDateParsed || !endDateParsed) {
 	      reqRespData.ExceptionMessage = $"Unable to parse start and end dates. Provide dates in mm/dd/yyyy format. Start date value {reqRespData.StartDate} End date value {reqRespData.EndDate}. ";
-	      stopWatch.Stop();
-	      reqRespData.ExecutionTime = getTimeString(stopWatch.Elapsed);
+	      reqRespData.Status = Constants.RESTORE_STATUS_EXCEPTION;
 
 	      return reqRespData;
 	   };
 
 
            if (startDate > endDate) {
-              reqRespData.ExceptionMessage = "Start date cannot be greater than end date.";
-	      stopWatch.Stop();
-	      reqRespData.ExecutionTime = getTimeString(stopWatch.Elapsed);
+              reqRespData.ExceptionMessage = "Start date cannot be greater than End date.";
+	      reqRespData.Status = Constants.RESTORE_STATUS_EXCEPTION;
 
 	      return reqRespData;
 	   };
-
-           log.LogInformation($"PerformRestore: Start date : {startDate.ToString("MM/dd/yyyy")}, End date {endDate.ToString("MM/dd/yyyy")}. Proceeding with restore process ...");
 
 	   reqRespData.StDate = startDate;
 	   reqRespData.EnDate = endDate;
 
-	   if ( ! String.IsNullOrEmpty(reqRespData.ContainerName) )
-              log.LogInformation($"PerformRestore: Container Name : {reqRespData.ContainerName}");
-
 	   if ( ! String.IsNullOrEmpty(reqRespData.BlobName) ) {
 	      if ( String.IsNullOrEmpty(reqRespData.ContainerName) ) {
-	         reqRespData.ExceptionMessage = $"To restore File : {reqRespData.BlobName}, container name is required!";
-		 stopWatch.Stop();
-		 reqRespData.ExecutionTime = getTimeString(stopWatch.Elapsed);
+	         reqRespData.ExceptionMessage = $"To restore File : {reqRespData.BlobName}, Container name is required!";
+	         reqRespData.Status = Constants.RESTORE_STATUS_EXCEPTION;
 
 		 return reqRespData;
 	      };
 	   };
-	   
-	   try
-	   {
-              await _restoreBackup.Run(reqRespData);
-           }
-           catch(Exception ex)
-           {
-              log.LogError($"PerformRestore: Exception occurred. Exception: {@ex.ToString()}");
-	      reqRespData.ExceptionMessage = $"Encountered exception : {@ex.ToString()}";
-	      stopWatch.Stop();
-	      reqRespData.ExecutionTime = getTimeString(stopWatch.Elapsed);
 
-	      return reqRespData;
-           }
-	   log.LogInformation($"PerformRestore: Completed execution at: {DateTime.Now}");
-
-	   stopWatch.Stop();
-	   reqRespData.ExecutionTime = getTimeString(stopWatch.Elapsed);
+	   if ( ! String.IsNullOrEmpty(reqRespData.ReqType) ) {
+	      if ( !reqRespData.ReqType.Equals(Constants.RESTORE_REQUEST_TYPE_SYNC) && 
+		   !reqRespData.ReqType.Equals(Constants.RESTORE_REQUEST_TYPE_ASYNC) )
+	      {
+	         reqRespData.ExceptionMessage = 
+	   	   $"Request Type '{reqRespData.ReqType}' is invalid.  Value should be either 'Sync' or 'Async'!";
+	         reqRespData.Status = Constants.RESTORE_STATUS_EXCEPTION;
+	      };
+	   };
 
 	   return reqRespData;
-        }
-
-	private string getTimeString(TimeSpan ts) {
-	  return ( String.Format("{0:00}:{1:00}:{2:00}.{3:00}",ts.Hours, ts.Minutes, ts.Seconds,
-	    ts.Milliseconds / 10) );
 	}
     }
 }

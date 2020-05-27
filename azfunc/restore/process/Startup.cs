@@ -42,6 +42,7 @@ namespace azfunc.restore.process
        public override void Configure(IFunctionsHostBuilder builder)
        {
           // Add services
+          builder.Services.AddTransient<IRestoreTableRepository, RestoreTableRepository>();
           builder.Services.AddTransient<IStorageRepository, TableRepository>();
           builder.Services.AddTransient<IBlobRepository, BlobRepository>();
           builder.Services.AddTransient<IRestoreBackup, RestoreBackupWorker>();

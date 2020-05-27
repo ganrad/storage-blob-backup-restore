@@ -33,9 +33,9 @@ using System.Threading.Tasks;
 /**
  * Description:
  * This Function runs the restore process (asynchronously) and is triggered by a Timer event.  Every time this Function
- * is triggered, mesages are read from an Azure Storage Table. The message contains the details for restoring blobs 
- * from a backup SA/Container to a target SA/Container over a given time period. The Function restores blobs based on 
- * the details found in the message.
+ * is triggered, mesages are read from an Azure Storage Table. The message contains the restore request details.  This
+ * information is used for restoring blobs from a backup SA/Container to a target SA/Container over a given 
+ * time period. The Function restores blobs based on the details found in the restore request JSON message.
  * 
  * Author: GR @Microsoft
  * Dated: 05-27-2020

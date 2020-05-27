@@ -129,8 +129,8 @@ namespace azfunc.restore.process
 
 	   if ( restoreDetails == null )
 	   {
-		   restoreDetails = new RestoreReqResponse();
-		   restoreDetails.ExceptionMessage = $"Couldn't find a restore request for year_weeko:{datestr} and guid:{guid}. Check the URI.";
+	      restoreDetails = new RestoreReqResponse();
+	      restoreDetails.ExceptionMessage = $"Couldn't find a restore request for year_weeko:{datestr} and guid:{guid}. Check the URI.";
 	   };
 
 	   log.LogInformation($"GetRestoreStatus: Completed execution at: {DateTime.Now}");

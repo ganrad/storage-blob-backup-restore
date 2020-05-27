@@ -43,7 +43,7 @@ namespace azfunc.restore.process
        {
           // Add services
           builder.Services.AddTransient<IRestoreTableRepository, RestoreTableRepository>();
-          builder.Services.AddTransient<IStorageRepository, TableRepository>();
+          builder.Services.AddTransient<ILogTableRepository, LogTableRepository>();
           builder.Services.AddTransient<IBlobRepository, BlobRepository>();
           builder.Services.AddTransient<IRestoreBackup, RestoreBackupWorker>();
        }

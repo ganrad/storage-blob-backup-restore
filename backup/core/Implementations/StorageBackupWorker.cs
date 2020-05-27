@@ -46,7 +46,7 @@ namespace backup.core.Implementations
 
         private readonly IStorageQueueRepository _queueRepository;
 
-        private readonly IStorageRepository _storageRepository;
+        private readonly ILogTableRepository _logRepository;
 
         private readonly IBlobRepository _blobRepository;
 
@@ -57,14 +57,14 @@ namespace backup.core.Implementations
         public StorageBackupWorker(
             ILogger<StorageBackupWorker> logger, 
             IStorageQueueRepository queueRepository, 
-            IStorageRepository storageRepository,
+            ILogTableRepository logRepository,
             IBlobRepository blobRepository)
         {
             _logger = logger;
 
             _queueRepository = queueRepository;
 
-            _storageRepository = storageRepository;
+            _logRepository = logRepository;
 
             _blobRepository = blobRepository;
         }
@@ -115,7 +115,7 @@ namespace backup.core.Implementations
                             _logger.LogDebug($"Skipping copying blob as it is not blob created event.---{@eventString}");
                         _logger.LogDebug($"Going to insert to storage---{@eventString}");
 
-                        await _storageRepository.InsertBLOBEvent(eventData);
+                        await _logRepository.InsertBLOBEvent(eventData);
 
                         _logger.LogDebug($"Going to delete message from queue---{@eventString}");
 

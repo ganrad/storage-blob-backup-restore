@@ -60,7 +60,7 @@ namespace azfunc.restore.process
 	}
 
 	/// <summary>
-	/// This function exposes an HTTP end-point
+	/// This function exposes an HTTP end-point to restore blobs in the target SA.
 	/// </summary>
 	[FunctionName("PerformRestore")]
         public async Task<ActionResult<RestoreReqResponse>> Run(
@@ -109,6 +109,21 @@ namespace azfunc.restore.process
 
 	   return reqRespData;
         }
+
+	/// <summary>
+	/// This function exposes an HTTP end-point to inquire on the status of either a running/completed
+	/// async restore request.
+	/// </summary>
+	[FunctionName("GetRestoreStatus")]
+        public async Task<ActionResult<RestoreReqResponse>> Run0(
+	   [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "restore")]
+	    HttpRequest req, string guid, ILogger log)
+	{
+	   log.LogInformation($"GetRestoreStatus: Invoked at: {DateTime.Now}");
+	   log.LogInformation($"GetRestoreStatus: Completed execution at: {DateTime.Now}");
+
+	   return null;
+	}
 
 	private string getTimeString(TimeSpan ts) {
 	  return ( String.Format("{0:00}:{1:00}:{2:00}.{3:00}",ts.Hours, ts.Minutes, ts.Seconds,

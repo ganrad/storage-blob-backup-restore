@@ -44,7 +44,7 @@ namespace azfunc.backup.process
           // Add services
           builder.Services.AddTransient<IStorageBackup, StorageBackupWorker>();
           builder.Services.AddTransient<IStorageQueueRepository, StorageQueueRepository>();
-          builder.Services.AddTransient<IStorageRepository, TableRepository>();
+          builder.Services.AddTransient<ILogTableRepository, LogTableRepository>();
           builder.Services.AddTransient<IBlobRepository, BlobRepository>();
        }
     }

@@ -45,7 +45,7 @@ namespace backup.core.Implementations
     {
         private readonly ILogger<RestoreBackupWorker> _logger;
 
-        private readonly IStorageRepository _storageRepository;
+        private readonly ILogTableRepository _logRepository;
 
         private readonly IBlobRepository _blobRepository;
 
@@ -55,12 +55,12 @@ namespace backup.core.Implementations
         /// <param name="logger"></param>
         public RestoreBackupWorker(
             ILogger<RestoreBackupWorker> logger, 
-            IStorageRepository storageRepository,
+            ILogTableRepository logRepository,
             IBlobRepository blobRepository)
         {
             _logger = logger;
 
-            _storageRepository = storageRepository;
+            _logRepository = logRepository;
 
             _blobRepository = blobRepository;
         }
@@ -89,7 +89,7 @@ namespace backup.core.Implementations
             {
                 _logger.LogInformation($"Starting restore for Year {dateData.Item1} Week {dateData.Item2} and Date {dateData.Item3.ToString("MM/dd/yyyy")}");
 
-                var blobEvents = await _storageRepository.GetBLOBEvents(dateData.Item1, dateData.Item2, dateData.Item3, dateData.Item3.AddDays(1));
+                var blobEvents = await _logRepository.GetBLOBEvents(dateData.Item1, dateData.Item2, dateData.Item3, dateData.Item3.AddDays(1));
 
                 _logger.LogInformation($"Found {blobEvents.Count} for {dateData.Item1} and Date {dateData.Item3.ToString("MM/dd/yyyy")}");
 

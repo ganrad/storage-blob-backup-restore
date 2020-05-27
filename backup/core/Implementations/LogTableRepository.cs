@@ -39,15 +39,15 @@ namespace backup.core.Implementations
     /// Table Repository
     /// https://docs.microsoft.com/en-us/azure/visual-studio/vs-storage-aspnet5-getting-started-tables
     /// </summary>
-    public class TableRepository : IStorageRepository
+    public class LogTableRepository : ILogTableRepository
     {
-        private readonly ILogger<TableRepository> _logger;
+        private readonly ILogger<LogTableRepository> _logger;
 
         /// <summary>
         /// Table Repository
         /// </summary>
         /// <param name="logger"></param>
-        public TableRepository(ILogger<TableRepository> logger)
+        public LogTableRepository(ILogger<LogTableRepository> logger)
         {
             _logger = logger;
         }

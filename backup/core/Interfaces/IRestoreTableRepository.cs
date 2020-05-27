@@ -37,9 +37,16 @@ namespace backup.core.Interfaces
         /// <summary>
         /// Inserts the blob event in Az storage table
         /// </summary>
-        /// <param name="blobEvent"></param>
+        /// <param name="restoreRequest"></param>
         /// <returns></returns>
 	Task InsertRestoreRequest(RestoreReqResponse restoreRequest);
+
+	/// <summary>
+	/// Retrieves the details of a restore request
+	/// </summary>
+	/// <param name="guid"></param>
+	/// <returns>RestoreReqResponse</returns>
+	Task<RestoreReqResponse> GetRestoreReqDetails(string guid);
 
         /// <summary>
         /// Returns the blob events data from Az storage table based on yearNumber, weeknumber, start date and end date

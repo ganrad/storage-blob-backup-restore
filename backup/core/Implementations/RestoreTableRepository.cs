@@ -42,13 +42,13 @@ namespace backup.core.Implementations
     /// </summary>
     public class RestoreTableRepository : IRestoreTableRepository
     {
-        private readonly ILogger<TableRepository> _logger;
+        private readonly ILogger<RestoreTableRepository> _logger;
 
         /// <summary>
         /// Restore Table Repository
         /// </summary>
         /// <param name="logger"></param>
-        public RestoreTableRepository(ILogger<TableRepository> logger)
+        public RestoreTableRepository(ILogger<RestoreTableRepository> logger)
         {
             _logger = logger;
         }
@@ -94,5 +94,15 @@ namespace backup.core.Implementations
             // Execute the insert operation.
             await restoreReqTable.ExecuteAsync(insertOperation);
         }
+
+	// <summary>
+	// Get the current status of a restore request
+	// </summary>
+	public async Task<RestoreReqResponse> GetRestoreReqDetails(string guid)
+	{
+	    CloudTable restoreReqTable = GetCloudTable();
+
+	    return null;
+	}
     }
 }

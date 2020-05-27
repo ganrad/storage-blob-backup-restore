@@ -33,7 +33,7 @@ namespace backup.core.Interfaces
     /// Repostiory to store the back up files logs.
     /// It contains methods to store and read the the backup logs.
     /// </summary>
-    public interface IStorageRepository
+    public interface ILogTableRepository
     {
         /// <summary>
         /// Inserts the blob event in Az storage table

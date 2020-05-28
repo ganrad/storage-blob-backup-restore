@@ -1,27 +1,26 @@
 ---
-page_type: sample
-languages:
-- csharp
-products:
-- azure
-description: "Today, Azure Blob storage doesn't offer an out of box solution for backing up block blobs."
-urlFragment: storage-block-blob-dotnet-backup
+Languages:
+- C #
+Products:
+- Azure
+Description: "Azure Blob Storage doesn't currently offer an out of box solution for backing up and restoring block blobs."
+urlFragment: storage-blob-backup-restore
 ---
 
-# Sample Backup Solution for Azure Block Blobs
+# Backup and Restore Solution for Azure Storage Blobs
 
-Today, Azure Blob storage doesn't offer an out of box solution for backing up block blobs. This sample can be used to perform daily incremental back-ups of storage accounts containing block blobs. 
+Azure Blob Storage currently doesn't offer an out of box solution for backing up and restoring block blobs. This project can be used to perform daily incremental back-ups of storage accounts containing block blobs. 
 
-In case of a disaster, the solution also provides an option to restore the storage account. 
+In case of a disaster, the solution also provides an option to restore the Azure Storage Account. 
 
 ## Features
 This project framework provides the following features:
-* Daily Incremental backup of storage account
-* Restore backup by providing start date and end date 
+* Daily Incremental backup of Azure Storage Account
+* Restore backup either synchronously or asynchronously
 
-## Prerequisites
-* Visual Studio 2017
-* Docker for Windows
+## Functional Architecture
+
+![alt tag](./images/az-storage-backup-restore.PNG)
 
 ## Instructions to Set-up Solution
 ### Set up Event Grid for Source Storage account.

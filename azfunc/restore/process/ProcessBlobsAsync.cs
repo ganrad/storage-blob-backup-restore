@@ -64,7 +64,7 @@ namespace azfunc.restore.process
 	/// </summary>
 	[FunctionName("PerformRestoreAsync")]
 	public async Task Run(
-	  [TimerTrigger("*/10 * * * * *")] TimerInfo callTimer,  // Fire every 10 seconds ...
+	  [TimerTrigger("%RestoreTriggerSchedule%")] TimerInfo callTimer,
 	   Microsoft.Extensions.Logging.ILogger log)
 	{
 	    if ( callTimer.IsPastDue )

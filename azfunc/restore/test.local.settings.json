@@ -3,6 +3,8 @@
     "Values": {
         "AzureWebJobsStorage": "",
         "FUNCTIONS_WORKER_RUNTIME": "dotnet",
+	"RestoreTriggerSchedule": "NCRONTAB expression",
+	"UpdateFrequencyCount": "Integer = Required",
 	"RES_STORAGE_ACCOUNT_CONN": "Backup Storage Account Connection String",
 	"SRC_STORAGE_ACCOUNT_CONN": "Source/Destination Storage Account Connection String --- Account to restore blobs",
 	"STORAGE_LOG_TABLE_CONN": "Replay Log Table Storage Account Connection String",

@@ -58,8 +58,8 @@ namespace azfunc.backup.process
 	/// </summary>
 	[FunctionName("PerformBackup")]
 	public async Task Run(
-		[TimerTrigger("*/10 * * * * *")] TimerInfo callTimer,  // Fire every 10 seconds ...
-		 Microsoft.Extensions.Logging.ILogger log)
+	  [TimerTrigger("%BackupTriggerSchedule%")] TimerInfo callTimer,
+	   Microsoft.Extensions.Logging.ILogger log)
 	{
 	    if ( callTimer.IsPastDue )
 	    {

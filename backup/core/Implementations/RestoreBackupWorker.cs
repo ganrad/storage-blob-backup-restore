@@ -49,6 +49,10 @@ namespace backup.core.Implementations
 
         private readonly IBlobRepository _blobRepository;
 
+	private readonly IRestoreTableRepository _restoreTblRepository;
+
+	private int _updateFrequencyCount;
+
         /// <summary>
         /// Storage back up
         /// </summary>
@@ -56,13 +60,19 @@ namespace backup.core.Implementations
         public RestoreBackupWorker(
             ILogger<RestoreBackupWorker> logger, 
             ILogTableRepository logRepository,
-            IBlobRepository blobRepository)
+            IBlobRepository blobRepository,
+	    IRestoreTableRepository restoreTblRepository)
         {
             _logger = logger;
 
             _logRepository = logRepository;
 
             _blobRepository = blobRepository;
+
+            _restoreTblRepository = restoreTblRepository;
+
+	    _updateFrequencyCount = 
+	      int.Parse(Environment.GetEnvironmentVariable("UpdateFrequencyCount"));
         }
 
         /// <summary>
@@ -149,9 +159,16 @@ namespace backup.core.Implementations
                             totalFailureCount++;
                             _logger.LogError($"Exception while restoring event {eventData.ReceivedEventDataJSON}. Exception {ex.ToString()}");
                         }
-                    }
+		       if ( reqResponse.ReqType.Equals(Constants.Constants.RESTORE_REQUEST_TYPE_ASYNC) && ( totalSuccessCount % _updateFrequencyCount == 0 ) )
+		       {
+	    	          reqResponse.TotalSuccessCount = totalSuccessCount;
+	    	          reqResponse.TotalFailureCount = totalFailureCount;
+		          await _restoreTblRepository.UpdateRestoreRequest(reqResponse);
+		       };
+                    };
+		    // Update the processed record count for async restore request
                 }
-            }
+            }; // End of outer For loop
 
             _logger.LogInformation($"Restore Success records count: {totalSuccessCount}. Restore Failure records count: {totalFailureCount}.");
 	    reqResponse.TotalSuccessCount = totalSuccessCount;

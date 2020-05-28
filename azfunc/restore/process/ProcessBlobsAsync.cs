@@ -112,7 +112,7 @@ namespace azfunc.restore.process
 		// Update the status of the restore request to exception
 		if ( reqRespData != null )
 		{
-		   reqRespData.Status = Constants.RESTORE_STATUS_EXCEPTION;
+		   reqRespData.Status = Constants.RESTORE_STATUS_FAILED;
 		   reqRespData.ExceptionMessage = $"PerformRestoreAsync: Encountered Exception: {@ex.ToString()}";
 		   reqRespData.EndTime = DateTime.Now.ToString();
 		   stopWatch.Stop();

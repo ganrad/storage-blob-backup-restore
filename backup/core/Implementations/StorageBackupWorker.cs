@@ -71,11 +71,10 @@ namespace backup.core.Implementations
 
         /// <summary>
         /// Run method
-        /// 1: Reads the messgaes from the queue.
-        /// 2: Stores the messages to the table storage.
-        /// 3: Deletes the messages from the queue
+        /// 1: Reads messages from the storage queue (blob create, update and delete events)
+        /// 2: Writes the messages to the table storage (replay log)
+        /// 3: Deletes messages from the storage queue
         /// </summary>
-        /// <returns></returns>
         public async Task Run()
         {
             _logger.LogDebug("Begin: StorageBackup.Run");

@@ -19,6 +19,7 @@ using System.Text;
 
 /* 
  * Description:
+ * This class contains methods for parsing dates and returning the Year, Month, Day of week and Week No. 
  * 
  * Author: GR @Microsoft
  * Dated: 05-23-2020

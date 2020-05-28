@@ -23,7 +23,7 @@ using System.Text;
 
 /**
  * Description:
- * This abstract/base class defines operations for parsing the storage events (C,U,D) received from the Event Grid.
+ * This abstract/base class defines operations for parsing storage blob events (C,U,D) received from the Event Grid.
  * 
  * Author: GR @Microsoft
  * Dated: 05-23-2020
@@ -76,8 +76,8 @@ namespace backup.core.Interfaces
         /// <summary>
         /// ParseBlobEvent
         /// </summary>
-        /// <param name="eventData"></param>
-        /// <returns></returns>
+        /// <param name="eventData">A JSON Blob event string</param>
+        /// <returns>A Blob Event</returns>
         public static IBlobEvent ParseBlobEvent(string eventData)
         {
             string eventId;

@@ -45,7 +45,7 @@ namespace backup.core.Implementations
         /// <summary>
         /// StorageQueueRepository
         /// </summary>
-        /// <param name="logger"></param>
+        /// <param name="logger">An ILogger</param>
         public StorageQueueRepository(ILogger<StorageQueueRepository> logger)
         {
             _logger = logger;
@@ -54,7 +54,7 @@ namespace backup.core.Implementations
         /// <summary>
         /// GetCloudQueue
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Returns a CloudQueue</returns>
         private CloudQueue GetCloudQueue()
         {
             string _storageAccountConnectionString =
@@ -75,9 +75,9 @@ namespace backup.core.Implementations
         }
 
         /// <summary>
-        /// Returns blob events
+        /// Returns an enumerable list of blob events
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Returns an IEnumerable<CloudQueueMessage></returns>
         public async Task<IEnumerable<CloudQueueMessage>> GetBLOBEvents()
         {
             int queueVisibilityTimeOutInMS = 
@@ -94,10 +94,9 @@ namespace backup.core.Implementations
         }
 
         /// <summary>
-        /// DeleteBLOBEventAsync
+        /// Deletes a blob event from the storage queue
         /// </summary>
-        /// <param name="message"></param>
-        /// <returns></returns>
+        /// <param name="message">A Queue message to be deleted</param>
         public async Task DeleteBLOBEventAsync(CloudQueueMessage message)
         {
             CloudQueue queue = GetCloudQueue();

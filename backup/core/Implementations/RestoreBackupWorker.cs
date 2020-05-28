@@ -71,8 +71,10 @@ namespace backup.core.Implementations
 
             _restoreTblRepository = restoreTblRepository;
 
-	    _updateFrequencyCount = 
-	      int.Parse(Environment.GetEnvironmentVariable("UpdateFrequencyCount"));
+	    _updateFrequencyCount =
+	       string.IsNullOrEmpty(Environment.GetEnvironmentVariable("UpdateFrequencyCount")) ? 
+	       Constants.Constants.RESTORE_UPDATE_FREQ_COUNT :
+	       int.Parse(Environment.GetEnvironmentVariable("UpdateFrequencyCount"));
         }
 
         /// <summary>

@@ -37,13 +37,13 @@ namespace backup.core.Interfaces
         /// <summary>
         /// Returns the BLOB Events
         /// </summary>
-        /// <returns></returns>
+        /// <returns>A enumerable list of queue messages</returns>
         Task<IEnumerable<CloudQueueMessage>> GetBLOBEvents();
 
         /// <summary>
-        /// Deletes the BLOB Event
+        /// Deletes the BLOB Event from the underlying storage queue
         /// </summary>
-        /// <returns></returns>
+	/// <param name="message">A queue message to be deleted</param>
         Task DeleteBLOBEventAsync(CloudQueueMessage message);
     }
 }

@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 /**
  * Description:
- * This interface defines operations that can be performed on entities in an Azure Storage Table.
+ * This interface defines operations for manipulating 'replay log' entities in an Azure Storage Table.
  * 
  * Author: GR @Microsoft
  * Dated: 05-23-2020
@@ -30,8 +30,8 @@ using System.Threading.Tasks;
 namespace backup.core.Interfaces
 {
     /// <summary>
-    /// Repostiory to store the back up files logs.
-    /// It contains methods to store and read the the backup logs.
+    /// Repository to store the back up (replay) logs.
+    /// This interface contains methods to store and read the backup logs entities.
     /// </summary>
     public interface ILogTableRepository
     {
@@ -43,13 +43,14 @@ namespace backup.core.Interfaces
         Task InsertBLOBEvent(IEventData eventData);
 
         /// <summary>
-        /// Returns the blob events data from Az storage table based on yearNumber, weeknumber, start date and end date
+        /// Returns the blob event entities from Az storage table based on yearNumber, weeknumber, start date and 
+	/// end date
         /// </summary>
         /// <param name="yearNumber"></param>
         /// <param name="weekNumber"></param>
         /// <param name="startDate"></param>
         /// <param name="endDate"></param>
-        /// <returns></returns>
+        /// <returns>A list of blob events from the replay log table</returns>
         Task<List<IEventData>> GetBLOBEvents(int yearNumber,int weekNumber, DateTime startDate, DateTime endDate);
     }
 }

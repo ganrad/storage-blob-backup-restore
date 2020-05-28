@@ -27,7 +27,7 @@ using System.Text;
  */
 namespace backup.core.Utilities
 {
-    /// <summary>Class to get a formatted date time string</summary>
+    /// <summary>Class containing methods to manipulate Date and Times</summary>
     public static class DateTimeUtil
     {
 	private static readonly DateTime Jan1St1970 = new DateTime (1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -35,9 +35,10 @@ namespace backup.core.Utilities
         /// <summary>Get extra long current timestamp</summary>
 	public static long Millis { get { return (long)((DateTime.UtcNow - Jan1St1970).TotalMilliseconds); } }	
 
-        /// <summary>Get extra date time string</summary>
+        /// <summary>Get formatted date time string</summary>
 	public static String GetString { get { return DateTime.Now.ToString("MM-dd-yyyy@HH:mm:ss.fff"); } }	
 
+        /// <summary>Get date time string</summary>
 	public static String getTimeString(TimeSpan ts) {
 	  return ( String.Format("{0:00}:{1:00}:{2:00}.{3:00}",ts.Hours,ts.Minutes,ts.Seconds,ts.Milliseconds / 10) );
 	}

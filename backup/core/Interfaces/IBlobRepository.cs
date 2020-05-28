@@ -20,8 +20,7 @@ using System.Threading.Tasks;
 
 /**
  * Description:
- * This interface defines operations for backing up and restoring Azure Storage Blobs from source to (and from)
- * destination SA's.
+ * This interface defines operations for copying Azure Storage Blobs from source to destination SA's (and vice versa).
  * SA ~ Azure Storage Account
  * 
  * Author: GR @Microsoft

@@ -104,7 +104,7 @@ namespace azfunc.restore.process
               {
                  log.LogError($"PerformRestore: Exception occurred. Exception: {@ex.ToString()}");
 	         reqRespData.ExceptionMessage = $"Encountered exception : {@ex.ToString()}";
-	         reqRespData.Status = Constants.RESTORE_STATUS_EXCEPTION;
+	         reqRespData.Status = Constants.RESTORE_STATUS_FAILED;
               }
 	   };
 
@@ -130,6 +130,7 @@ namespace azfunc.restore.process
 	   if ( restoreDetails == null )
 	   {
 	      restoreDetails = new RestoreReqResponse();
+	      restoreDetails.Status = Constants.RESTORE_STATUS_UNKNOWN;
 	      restoreDetails.ExceptionMessage = $"Couldn't find a restore request for year_weekno:{datestr} and guid:{guid}. Check the URI.";
 	   };
 
@@ -144,7 +145,7 @@ namespace azfunc.restore.process
 
            if ( String.IsNullOrEmpty(reqRespData.StartDate) || String.IsNullOrEmpty(reqRespData.EndDate) ) {
 	      reqRespData.ExceptionMessage = "Start and End dates are incorrect and/or missing!";
-	      reqRespData.Status = Constants.RESTORE_STATUS_EXCEPTION;
+	      reqRespData.Status = Constants.RESTORE_STATUS_FAILED;
 
 	      return reqRespData;
 	   };
@@ -160,7 +161,7 @@ namespace azfunc.restore.process
 
            if (!startDateParsed || !endDateParsed) {
 	      reqRespData.ExceptionMessage = $"Unable to parse start and end dates. Provide dates in mm/dd/yyyy format. Start date value {reqRespData.StartDate} End date value {reqRespData.EndDate}. ";
-	      reqRespData.Status = Constants.RESTORE_STATUS_EXCEPTION;
+	      reqRespData.Status = Constants.RESTORE_STATUS_FAILED;
 
 	      return reqRespData;
 	   };
@@ -168,7 +169,7 @@ namespace azfunc.restore.process
 
            if (startDate > endDate) {
               reqRespData.ExceptionMessage = "Start date cannot be greater than End date.";
-	      reqRespData.Status = Constants.RESTORE_STATUS_EXCEPTION;
+	      reqRespData.Status = Constants.RESTORE_STATUS_FAILED;
 
 	      return reqRespData;
 	   };
@@ -179,7 +180,7 @@ namespace azfunc.restore.process
 	   if ( ! String.IsNullOrEmpty(reqRespData.BlobName) ) {
 	      if ( String.IsNullOrEmpty(reqRespData.ContainerName) ) {
 	         reqRespData.ExceptionMessage = $"To restore File : {reqRespData.BlobName}, Container name is required!";
-	         reqRespData.Status = Constants.RESTORE_STATUS_EXCEPTION;
+	         reqRespData.Status = Constants.RESTORE_STATUS_FAILED;
 
 		 return reqRespData;
 	      };
@@ -191,7 +192,7 @@ namespace azfunc.restore.process
 	      {
 	         reqRespData.ExceptionMessage = 
 	   	   $"Request Type '{reqRespData.ReqType}' is invalid.  Value should be either 'Sync' or 'Async'!";
-	         reqRespData.Status = Constants.RESTORE_STATUS_EXCEPTION;
+	         reqRespData.Status = Constants.RESTORE_STATUS_FAILED;
 	      };
 	   };
 

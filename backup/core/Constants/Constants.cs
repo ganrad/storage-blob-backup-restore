@@ -38,7 +38,10 @@ namespace backup.core.Constants
         public const string RESTORE_STATUS_ACCEPTED = "Accepted";
         public const string RESTORE_STATUS_INPROCESS = "Processing";
         public const string RESTORE_STATUS_COMPLETED = "Completed";
-        public const string RESTORE_STATUS_EXCEPTION = "Exception";
+        public const string RESTORE_STATUS_FAILED = "Failed";
+        public const string RESTORE_STATUS_UNKNOWN = "Unknown";
+
+	public const int RESTORE_UPDATE_FREQ_COUNT = 50;
 
         /// <summary>
         /// BLOB Event Type

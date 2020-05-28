@@ -117,6 +117,10 @@ namespace backup.core.Implementations
 	    return restoreReqStatus;
 	}
 
+	/// <summary>
+	/// Fetch the next restore request to be processed. Status = ACCEPTED
+	/// </summary>
+	/// <returns>RestoreReqResponse</returns>
 	public async Task<RestoreReqResponse> GetRestoreRequest()
 	{
 	    RestoreReqResponse reqRespData = null;
@@ -147,6 +151,10 @@ namespace backup.core.Implementations
 	    return reqRespData;
 	}
 
+	/// <summary>
+	/// Update a restore request entity in the storage table
+	/// </summary>
+	/// <param>RestoreReqResponse</param>
 	public async Task UpdateRestoreRequest(RestoreReqResponse restoreRequest)
 	{
 	    string url = restoreRequest.StatusLocationUri;

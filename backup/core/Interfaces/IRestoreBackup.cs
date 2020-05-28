@@ -40,7 +40,6 @@ namespace backup.core.Interfaces
         /// Run
         /// </summary>
         /// <param name="reqResponse"></param>
-        /// <returns></returns>
         Task Run(RestoreReqResponse reqResponse);
     }
 }

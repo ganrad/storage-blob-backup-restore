@@ -82,10 +82,6 @@ namespace backup.core.Models
             {
                 ReceivedEventDataJSON = JsonConvert.SerializeObject(ReceivedEventData);
 
-                // string partitionKey = string.Empty;
-
-                // string rowKey = string.Empty;
-
                 EventDateDetails dateDetails = new EventDateDetails(eventDateTime);
 
                 base.PartitionKey = $"{dateDetails.year}_{dateDetails.WeekNumber}";

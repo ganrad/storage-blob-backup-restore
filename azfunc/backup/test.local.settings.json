@@ -3,7 +3,7 @@
     "Values": {
         "AzureWebJobsStorage": "",
         "FUNCTIONS_WORKER_RUNTIME": "dotnet",
-	"BackupTriggerSchedule": "NCRONTAB expression",
+	"BackupTriggerSchedule": "NCRONTAB expression. Mandatory. Refer to: https://docs.microsoft.com/en-us/azure/azure-functions/functions-bindings-timer?tabs=csharp#ncrontab-expressions",
 	"SRC_STORAGE_ACCOUNT_CONN": "Source Storage Account Connection String",
 	"RES_STORAGE_ACCOUNT_CONN": "Backup Storage Account Connection String",
 	"EVT_STORAGE_ACCOUNT_CONN": "Event Queue Storage Account Connection String",

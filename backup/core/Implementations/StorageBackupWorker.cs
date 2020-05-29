@@ -80,57 +80,58 @@ namespace backup.core.Implementations
             _logger.LogDebug("Begin: StorageBackup.Run");
 
             var blobEvents = await _queueRepository.GetBLOBEvents();
+	    do {
 
-            _logger.LogInformation($"Number of messages found in queue.---{blobEvents.Count()}");
+               _logger.LogInformation($"Number of messages found in queue.---{blobEvents.Count()}");
 
-            EventData eventData = null;
+               EventData eventData = null;
+               string eventString = string.Empty;
 
-            string eventString = string.Empty;
+               foreach (CloudQueueMessage blobEvent in blobEvents)
+               {
+                   try
+                   {
+                       eventString = blobEvent.AsString;
+                       eventData = new EventData(eventString);
+                       if (eventData.ReceivedEventData != null)
+                       {
+                           //In case file has been added, copy the file from source storage to destination storage
+                           if (eventData.ReceivedEventData is BlobEvent<CreatedEventData>)
+                           {
+                               _logger.LogDebug($"Going to write to blob---{@eventString}");
 
-            foreach (CloudQueueMessage blobEvent in blobEvents)
-            {
-                try
-                {
-                    eventString = blobEvent.AsString;
+                               DestinationBlobInfo destinationBlobInfo = await _blobRepository.CopyBlobFromSourceToBackup(eventData.ReceivedEventData);
+                               eventData.DestinationBlobInfo = destinationBlobInfo;
+                               if (eventData.DestinationBlobInfo == null)
+                                   _logger.LogDebug($"DestinationBlobInfo is null. File not copied---{@eventString}");
+			       else
+                                   eventData.DestinationBlobInfoJSON  = JsonConvert.SerializeObject(destinationBlobInfo);
+                           }
+                           else
+                               _logger.LogDebug($"Skipping copying blob as it is not blob created event.---{@eventString}");
+                           _logger.LogDebug($"Going to insert to storage---{@eventString}");
 
-                    eventData = new EventData(eventString);
+			   // Insert the blob event into the relay log table
+                           await _logRepository.InsertBLOBEvent(eventData);
 
-                    if (eventData.ReceivedEventData != null)
-                    {
-                        //In case file has been added, copy the file from source storage to destination storage
-                        if (eventData.ReceivedEventData is BlobEvent<CreatedEventData>)
-                        {
-                            _logger.LogDebug($"Going to write to blob---{@eventString}");
+                           _logger.LogDebug($"Going to delete message from queue---{@eventString}");
 
-                            DestinationBlobInfo destinationBlobInfo = await _blobRepository.CopyBlobFromSourceToBackup(eventData.ReceivedEventData);
+                           //delete the message from queue only after insert in replay log table succeeds
+                           await _queueRepository.DeleteBLOBEventAsync(blobEvent);
+                       }
+                       else
+                       {
+                           _logger.LogDebug($"EventData.RecievedEventData is null. Currently the utility understands Created and Deleted Events only.---{@eventString}");
+                       }
+                   }catch (Exception ex)
+                   {
+                       _logger.LogError($"Error while inserting to storage repository for this event. Event should come back to queue. Exception: {@ex.ToString()} | Event Data: {@eventString}");
+                   }
+               }
 
-                            eventData.DestinationBlobInfo = destinationBlobInfo;
-                            if (eventData.DestinationBlobInfo == null)
-                                _logger.LogDebug($"DestinationBlobInfo is null. File not copied---{@eventString}");
-			    else
-                                eventData.DestinationBlobInfoJSON  = JsonConvert.SerializeObject(destinationBlobInfo);
-                        }
-                        else
-                            _logger.LogDebug($"Skipping copying blob as it is not blob created event.---{@eventString}");
-                        _logger.LogDebug($"Going to insert to storage---{@eventString}");
-
-                        await _logRepository.InsertBLOBEvent(eventData);
-
-                        _logger.LogDebug($"Going to delete message from queue---{@eventString}");
-
-                        //delete the message from queue only after insert in replay log table succeeds
-                        await _queueRepository.DeleteBLOBEventAsync(blobEvent);
-                        
-                    }
-                    else
-                    {
-                        _logger.LogDebug($"EventData.RecievedEventData is null. Currently the utility understands Created and Deleted Events only.---{@eventString}");
-                    }
-                }catch (Exception ex)
-                {
-                    _logger.LogError($"Error while inserting to storage repository for this event. Event should come back to queue. Exception: {@ex.ToString()} | Event Data: {@eventString}");
-                }
-            }
+	       blobEvents = await _queueRepository.GetBLOBEvents();
+	    }
+	    while ( blobEvents.Count() > 0 );
 
             _logger.LogDebug("End: StorageBackup.Run");
         }

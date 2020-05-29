@@ -247,5 +247,26 @@ namespace backup.core.Implementations
             }
             return false;
         }
+
+	/// <summary>
+	/// GenerateSASBlobToken
+	/// </summary>
+	/// <param name="sourceBlockBlob"></param>
+	/// <returns></returns>
+	private string GenerateSASBlobToken(CloudBlockBlob sourceBlockBlob)
+	{
+	    int blobSASExpiryInMinutes = int.Parse(Environment.GetEnvironmentVariable("BlobSASExpiryInMts"));
+
+	    //Set the expiry time and permissions for the blob.
+	    //In this case, the start time is specified as a few minutes in the past, to mitigate clock skew.
+	    //The shared access signature will be valid immediately.
+	    SharedAccessBlobPolicy sasConstraints = new SharedAccessBlobPolicy();
+	    sasConstraints.SharedAccessStartTime = DateTimeOffset.UtcNow.AddMinutes(-5);
+	    sasConstraints.SharedAccessExpiryTime = DateTimeOffset.UtcNow.AddMinutes(blobSASExpiryInMinutes);
+	    sasConstraints.Permissions = SharedAccessBlobPermissions.Read;
+	    
+	    //Generate the shared access signature on the blob, setting the constraints directly on the signature.
+	    return sourceBlockBlob.GetSharedAccessSignature(sasConstraints);
+	}
     }
 }

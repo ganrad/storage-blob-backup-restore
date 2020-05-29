@@ -1,6 +1,8 @@
 {
-	"startDate": "05/24/2020",
-	"endDate": "05/24/2020",
-	"containerName": "case-02",
-	"reqType": "Async"
+	"startDate": "05/24/2020", // Required.  Format 'mm/dd/yyyy'
+	"endDate": "05/24/2020", // Required. Format 'mm/dd/yyyy'
+	"containerName": "case-01", // Optional
+	"blobName": "xyz.json", // Optional
+	"skipDeletes": "no", // Optional.  Default = no; Set to 'yes' or 'no'
+	"reqType": "Async" // Optional.  Default = Sync; Set to 'Sync' or 'Async'
 }

@@ -120,7 +120,7 @@ namespace backup.core.Implementations
 				    if ( (! String.IsNullOrEmpty(reqResponse.ContainerName)) && (! String.Equals(eventData.DestinationBlobInfo.OrgContainerName, reqResponse.ContainerName)) )
 				       continue;
 
-				    if ( (! String.IsNullOrEmpty(reqResponse.BlobName)) && (! String.Equals(eventData.DestinationBlobInfo.OrgBlobName, reqResponse.BlobName)) )
+				    if ( (reqResponse.BlobNames != null) && (! reqResponse.BlobNames.Contains(eventData.DestinationBlobInfo.OrgBlobName)) )
 				       continue;
 				    
                                     _logger.LogInformation($"Going to perform copy as it is a created event {createdBlob.data.url}");
@@ -142,7 +142,7 @@ namespace backup.core.Implementations
 				if ( (! String.IsNullOrEmpty(reqResponse.ContainerName)) && (! deletedBlob.data.url.Contains(reqResponse.ContainerName)) )
 				   continue;
 
-				if ( (! String.IsNullOrEmpty(reqResponse.BlobName)) && (! deletedBlob.data.url.Contains(reqResponse.BlobName)) )
+				if ( (reqResponse.BlobNames != null) && (! reqResponse.BlobNames.Exists(x => deletedBlob.data.url.Contains(x)) ) )
 				   continue;
 				
                                 _logger.LogInformation($"Going to perform delete as it is a deleted event {deletedBlob.data.url}");

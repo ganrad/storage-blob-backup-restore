@@ -14,6 +14,8 @@
 //
 
 using System;
+using System.Collections.Generic;
+
 using Newtonsoft.Json;
 
 using backup.core.Constants;
@@ -66,7 +68,7 @@ namespace backup.core.Models
       /// File name
       /// </summary>
       [JsonProperty]
-      public string BlobName { get; set; } = "";
+      public List<string> BlobNames { get; set; }
 
       /// <summary>
       /// Request type : Synchronous or Asynchronous

@@ -2,7 +2,10 @@
 	"startDate": "05/24/2020", // Required.  Format 'mm/dd/yyyy'
 	"endDate": "05/24/2020", // Required. Format 'mm/dd/yyyy'
 	"containerName": "case-01", // Optional
-	"blobName": "xyz.json", // Optional
+	"blobNames": { // Optional. List of blobs (full path names) to restore
+	  "xyz.json",
+	  "abc.pdf"
+	},
 	"skipDeletes": "no", // Optional.  Default = no; Set to 'yes' or 'no'
 	"reqType": "Async" // Optional.  Default = Sync; Set to 'Sync' or 'Async'
 }

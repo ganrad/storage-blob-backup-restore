@@ -177,9 +177,9 @@ namespace azfunc.restore.process
 	   reqRespData.StDate = startDate;
 	   reqRespData.EnDate = endDate;
 
-	   if ( ! String.IsNullOrEmpty(reqRespData.BlobName) ) {
+	   if ( (reqRespData.BlobNames != null) ) {
 	      if ( String.IsNullOrEmpty(reqRespData.ContainerName) ) {
-	         reqRespData.ExceptionMessage = $"To restore File : {reqRespData.BlobName}, Container name is required!";
+	         reqRespData.ExceptionMessage = $"Container name is required to restore blobs!";
 	         reqRespData.Status = Constants.RESTORE_STATUS_FAILED;
 
 		 return reqRespData;

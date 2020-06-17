@@ -11,6 +11,7 @@
 	"QueueVisibilityTimeOutInMS": "300000",
 	"QueueMessageCountToRead": "32",
 	"STORAGE_LOG_TABLE_CONN": "Replay Log Table Storage Account Connection String",
-	"STORAGE_LOG_TABLE_NAME": "replaylog"
+	"STORAGE_LOG_TABLE_NAME": "replaylog",
+	"TargetBlobTier": "Blob tier of the backed up blob. Value should be an integer.  Allowed values are : 1 (Hot), 2 (Cool) or 3 (Archive)"
     }
 }

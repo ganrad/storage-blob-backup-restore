@@ -10,6 +10,7 @@
 	"STORAGE_LOG_TABLE_CONN": "Replay Log Table Storage Account Connection String",
 	"STORAGE_LOG_TABLE_NAME": "replaylog",
 	"STORAGE_RESTORE_TABLE_CONN": "Restore request table Storage Account Connection String",
-	"STORAGE_RESTORE_TABLE_NAME": "restoretbl"
+	"STORAGE_RESTORE_TABLE_NAME": "restoretbl",
+	"TargetBlobTier": "Target Blob Tier (integer).  Allowed values : 1 (Hot), 2 (Cool), 3 (Archive)"
     }
 }

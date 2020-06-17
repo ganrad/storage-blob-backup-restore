@@ -22,6 +22,7 @@ using Microsoft.Azure.Storage;
 using Microsoft.Azure.Storage.Blob;
 
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 /**
@@ -67,6 +68,28 @@ namespace backup.core.Implementations
             string sourceStorageAccountConnectionString = 
  	       Environment.GetEnvironmentVariable("SRC_STORAGE_ACCOUNT_CONN");
 
+            int blobTier = 
+	       string.IsNullOrEmpty(Environment.GetEnvironmentVariable("TargetBlobTier")) ?
+	       2 :
+ 	       int.Parse(Environment.GetEnvironmentVariable("TargetBlobTier"));
+
+	    StandardBlobTier targetBlobTier; // Default tier is set to Cool
+	    switch (blobTier)
+	    {
+	       case 1:
+		   targetBlobTier = StandardBlobTier.Hot;
+		   break;
+	       case 2:
+		   targetBlobTier = StandardBlobTier.Cool;
+		   break;
+	       case 3:
+		   targetBlobTier = StandardBlobTier.Archive;
+		   break;
+	       default:
+		   targetBlobTier = StandardBlobTier.Cool;
+		   break;
+	    };
+
             if (eventData is BlobEvent<CreatedEventData>)
             {
                 // Retrieve the storage account from the connection string.
@@ -108,7 +131,16 @@ namespace backup.core.Implementations
                     _logger.LogInformation($"About to sync copy from Container: {sourceBlockBlob.Container.Name}, Blob: {sourceBlockBlob.Name}. Blob size: {sourceBlockBlob.Properties.Length} bytes");
 
                     // copyResult = "SYNCCOPY";
-                    string copyResult = await destinationBlob.StartCopyAsync(sourceBlockBlob);
+                    string copyResult = 
+		      await destinationBlob.StartCopyAsync(
+		 	sourceBlockBlob,
+			targetBlobTier,
+			null, // Rehydrate priority
+			null, // Source access condition
+			null, // Destination access condition
+			null, // Blob request options
+			null, // Operation context
+			(new CancellationTokenSource()).Token);
                    
                     destinationBlobInfo = new DestinationBlobInfo();
 
@@ -152,6 +184,28 @@ namespace backup.core.Implementations
             string sourceStorageAccountConnectionString = 
  	       Environment.GetEnvironmentVariable("RES_STORAGE_ACCOUNT_CONN");
 
+            int blobTier = 
+	       string.IsNullOrEmpty(Environment.GetEnvironmentVariable("TargetBlobTier")) ?
+	       1 :
+ 	       int.Parse(Environment.GetEnvironmentVariable("TargetBlobTier"));
+
+	    StandardBlobTier targetBlobTier; // Default tier is set to Hot
+	    switch (blobTier)
+	    {
+	       case 1:
+		   targetBlobTier = StandardBlobTier.Hot;
+		   break;
+	       case 2:
+		   targetBlobTier = StandardBlobTier.Cool;
+		   break;
+	       case 3:
+		   targetBlobTier = StandardBlobTier.Archive;
+		   break;
+	       default:
+		   targetBlobTier = StandardBlobTier.Hot;
+		   break;
+	    };
+
             // Retrieve the storage account from the connection string.
             CloudStorageAccount sourceStorageAccount = CloudStorageAccount.Parse(sourceStorageAccountConnectionString);
 
@@ -182,7 +236,16 @@ namespace backup.core.Implementations
                     _logger.LogInformation($"About to sync copy from Container: {sourceBlockBlob.Container.Name}, Blob: {sourceBlockBlob.Name}. Blob size: {sourceBlockBlob.Properties.Length} bytes");
 
                     // copyResult = "SYNCCOPY";
-                    string copyResult = await destinationBlob.StartCopyAsync(sourceBlockBlob);
+                    string copyResult = 
+		      await destinationBlob.StartCopyAsync(
+		 	sourceBlockBlob,
+			targetBlobTier,
+			null, // Rehydrate priority
+			null, // Source access condition
+			null, // Destination access condition
+			null, // Blob request options
+			null, // Operation context
+			(new CancellationTokenSource()).Token);
 
                     _logger.LogInformation($"Copy Scheduled. Source Blob Name: {backupBlob.BlobName}, Destination Blob Name: {backupBlob.OrgBlobName}, Copy Id: {copyResult}.");
 

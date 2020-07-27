@@ -9,7 +9,7 @@ urlFragment: storage-blob-backup-restore
 
 # Backup and Restore Solution for Azure Storage Blobs
 
-Azure Blob Storage currently doesn't offer an out of box solution for backing up and restoring block blobs. This project can be used to perform daily incremental back-ups of storage accounts containing block blobs. 
+Azure Blob Storage currently doesn't offer an out of box solution for backing up and restoring block blobs. This project can be used to perform weekly full and daily incremental back-ups of storage accounts containing block blobs. 
 
 In case of a disaster, the solution also provides an option to restore the Azure Storage Account. 
 

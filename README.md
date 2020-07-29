@@ -1,6 +1,6 @@
 ---
 Languages:
-- C #
+- C#
 Products:
 - Azure
 Description: "Azure Blob Storage doesn't currently offer an out of box solution for backing up and restoring block blobs."
@@ -9,9 +9,11 @@ urlFragment: storage-blob-backup-restore
 
 # Backup and Restore Solution for Azure Storage Blobs
 
-Azure Blob Storage currently doesn't offer an out of box solution for backing up and restoring block blobs. This project can be used to perform daily incremental back-ups of storage accounts containing block blobs. 
+Azure Blob Storage currently doesn't offer an out of box solution for backing up and restoring block blobs. This project can be used to perform weekly full and daily incremental back-ups of storage accounts containing block blobs.
 
-In case of a disaster, the solution also provides an option to restore the Azure Storage Account. 
+In case of a disaster, the solution also provides an option to restore blobs to the specified Storage Account.
+
+Since all components in this solution are Azure's first-party services, important blob properties such as Created & LastModified time, and the **metadata** of each blob object will be preserved during backup and restore.
 
 ## Features
 This project framework provides the following features:
@@ -20,12 +22,36 @@ This project framework provides the following features:
 
 ## Functional Architecture
 
+In the following diagram:
+* The upper half represents the **BACKUP** workflow of the solution: _Source blobs -> Event Grid -> Queue -> Backup Function -> Backup_.
+* The bottom half represents the **RESTORE** workflow: _Initiating restore -> Restore Function reads from Replay logs -> read & copy blobs from Backup storage account to Restore storage account_.
+* The _Replay Log_ inside the Table Storage is where all the blob operations are stored and will be _replayed_ during the process to restore blobs.
+* Each restore operation is stored in the _Restore Table_.
+
 ![alt tag](./images/az-storage-backup-restore.PNG)
 
-## Instructions to Set-up Solution
-### Set up Event Grid for Source Storage account.
-* Create an Azure storage queue first to store the event grid events. Please note this storage account containing the storage queue cannot be connected to VNET.
-* Create an event subscription for the storage account by firing the below command in the Azure Command Shell. Please note, this feature is still in preview and you will have to install the Event Grid extension for Azure CLI. You can install it with _az extension add --name eventgrid_. This step will make sure all the create, replace and delete events are recorded in the configured Azure Storage Queue. **Please note modifications to a BLOB are not recorded hence our solution won’t be able to support the same.**
+## Instructions to configure this solution
+
+### Create storage accounts for Source, Backup and Restore
+Unless otherwise specified, we use **general-purpose v2** storage accounts in this solution. Storage account **v1** does not support integration with Event Grid.
+1. If you don't already have an existing source storage account for your blobs, create a new storage account "_mysourceblobs_". This is the source blob storage you want to protect with this backup solution.
+1. Create a new backup storage account "_mybackupblobs_" in a different Azure region from "_mysourceblobs_".
+1. In the same Azure region as your source storage account, create a new storage account "_myrestoreblobs_". This is the storage account where we will restore the blobs from backup.
+1. You should have 3 storages accounts before proceeding to the next section:
+![alt tag](./images/portal-rg-storageaccounts.png)
+
+### Configure Storage Queue and Event Grid for blob events
+
+In this section, we will configure Blob events so when there's a CRUD operation to the blobs, it will trigger an event. Blob storage events are pushed using Azure Event Grid to Queue Storage.
+
+1. In your storage account "_mybackupblobs_", create a [Queue Storage](https://docs.microsoft.com/en-us/azure/storage/queues/storage-queues-introduction) to store the event grid events. Please note this storage account containing the storage queue cannot be connected to VNET.
+![alt tag](./images/portal-rg-queue-blob-events.png)
+
+2. Go to your source storage account "_mysourceblobs_". Configure blob events and filter Event Grid event subscription for event types **Blob Created** and **Blob Deleted** (both types are enabled by default).
+![alt tag](./images/portal-rg-storageevents.png)
+![alt tag](./images/portal-rg-storageeventgrid.png)
+
+3. _Alternatively_, you can create an event subscription for the storage account by firing the below command in [Azure Cloud Shell](https://shell.azure.com). Please note, this feature is still in preview and you will have to install the Event Grid extension for Azure CLI. You can install it with _az extension add --name eventgrid_. This step will make sure all the create, replace and delete events are recorded in the configured Azure Storage Queue. **Please note modifications to a BLOB are not recorded hence our solution won’t be able to support the same.**
 
 ```
 az eventgrid event-subscription create \
@@ -36,9 +62,15 @@ az eventgrid event-subscription create \
 --endpoint "/subscriptions/<<subscriptionid>>/resourcegroups/<<resourcegroupname>>/providers/Microsoft.Storage/storageAccounts/<<storageaccountname>>/queueservices/default/queues/<<queuename>>"
 ```
 
+### Configure Storage Table for Replay logs
+Replay logs are the blob operation logs (such as create or delete) stored in Table Storage while the backup blobs are being created. These transactions will be _replayed_ during the process of restoring blobs from backup.
+
+* Create a Table Storage under storage account "_mybackupblobs_":
+![alt tag](./images/portal-rg-storagetable.png)
+
 ### Set up .Net Core Projects to perform incremental backup and restore backup.
 
-The sample solution has three projects in it.
+The sample solution has three projects in it. You can deploy them as Azure Functions.
 
 * ##### backup.core	
 This project does not require any modification. It contains the logic of backup, and restore.
